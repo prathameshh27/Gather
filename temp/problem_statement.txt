@@ -1,0 +1,14 @@
+You are tasked with building a backend API for a meeting scheduling application. 
+The application should allow users to:
+
+1. Schedule meetings.
+2. View their scheduled meetings.
+3. Ensure that there are no scheduling conflicts when booking meetings.
+4. Delete earlier meeting scheduled
+
+New users should be able to register while old users should be able to login
+
+
+Please write comments in the code. 
+Also, please create a document with steps to install. 
+Upload the code in Github.
