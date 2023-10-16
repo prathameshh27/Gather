@@ -1,24 +1,32 @@
-from django.db import models
-from django.contrib.auth.models import AbstractUser
-from apps.lib.utils.functions import custom_id
-from django.utils import timezone
-from django.db.models import Q
 from django.conf import settings
+from django.utils import timezone
+
+from django.db import models
+from django.db.models import Q
+
+from django.contrib.auth.models import AbstractUser
+
+from apps.lib.utils.functions import custom_id
+
 
 class CustomUser(AbstractUser):
-    
+    """User Model"""
+
     IST_TZ = settings.IST_TZ
 
-    id = models.CharField(primary_key=True, unique=True, editable=False, default=custom_id, max_length=11)
+    id = models.CharField(primary_key=True, unique=True, editable=False,
+                          default=custom_id, max_length=11)
 
-    # returns name and id both for debugging purpose 
+
     def __str__(self) -> str:
         return "{}".format(self.username)
+
 
     def get_id(self) -> str:
         """Get user ID"""
         return self.id
-    
+
+
     def get_obj(self) -> object:
         """Get user object"""
         return self
@@ -38,32 +46,35 @@ class CustomUser(AbstractUser):
     def list_managed_meetings(self, queryset={}) -> str:
         """Get user ID"""
         return self.meeting_owner.filter(**queryset)
-        
+
 
     def check_schedule_conflict(self, starts_at, ends_at) -> bool:    
         """Checks if the user has a conflicting schedule while setting up a new meeting"""
         try:
             upcoming_meetings = self.list_upcoming_meetings()
-            
+
+            # Takes a timeframe as the input and
+            # filters all the upcoming meeting schedules for the current user.
             queryparams = (
                 (Q(starts_at__gte=starts_at) & Q(starts_at__lt=ends_at)) |
                 (Q(ends_at__gt=starts_at) & Q(ends_at__lte=ends_at))
             )
             meetings = upcoming_meetings.filter(queryparams)
-
+            # if any meetings are found then it implies, the user is unavailable.
             is_available = False if meetings.count() > 0 else True
-        
+
         except Exception as exp:
             is_available = None
-        
+
         return is_available
-  
-    
+
+
     @classmethod
     def list_users(cls) -> object:
         """List all users"""
         return cls.objects.all()
-    
+
+
     @classmethod
     def get_user(cls, id:str) -> object:
         """Get specific user"""
@@ -72,7 +83,7 @@ class CustomUser(AbstractUser):
         except Exception as excp:
             user = None
         return user
-    
+
 
     @classmethod
     def get_user_by_username(cls, username:str) -> object:
@@ -93,7 +104,8 @@ class CustomUser(AbstractUser):
         except Exception as excp:
             users = None
         return users
-    
+
+
     @classmethod
     def delete_user(cls, id:str) -> bool:
         """Delete user by ID"""

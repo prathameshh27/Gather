@@ -1,35 +1,25 @@
-from ..serializers.meeting_serializer import MeetingSerializer, Meeting
-from django.db.models import Q
-
 from rest_framework.response import Response
-from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.decorators import authentication_classes, permission_classes
-from django.contrib.auth.decorators import login_required
 
-from apps.lib.utils.functions import (
-    resp_excp_handler,
-    get_validation_errors,
-    )
+from ..serializers.meeting_serializer import MeetingSerializer, Meeting
+from apps.lib.utils.functions import resp_excp_handler, get_validation_errors
 
-# ToDo: Minimize the use of conditional blocks. 
-# Add validations at serializer level instead.
-
+# created a class for future extesibility
 class MeetingViewSet:
+    """Supports All the functions based meeting views."""
 
     RESPONSE = {"message": "Something went wrong. The request could not be fulfilled"}
     HTTP_STATUS = 500
 
-
     # create a meeting
     @resp_excp_handler
     def create_meeting(self, request) -> Response:
+        """Creates a user object based on the request payload"""
         response = self.RESPONSE
         http_status = self.HTTP_STATUS
 
         post_data = request.data
         post_data["created_by"] = request.user.get_id()
-        
+
         meeting_serializer = MeetingSerializer(data=post_data, many=False)
 
         if meeting_serializer.is_valid():
@@ -45,82 +35,85 @@ class MeetingViewSet:
         else:
             response = {"message" : "meeting could not be added"}
             response["errors"]  = get_validation_errors(meeting_serializer)
+
         return Response(data=response, status=http_status)
+
 
     # list all meetings
     @resp_excp_handler
     def list_meetings(self, request) -> Response:
+        """Lists all existing meetings the user is added to"""
         response = self.RESPONSE
         http_status = self.HTTP_STATUS
 
-        # queryparams = {}
-        # queryparams["starts_at__gte"] = "2023-10-12T22:20"
-        # queryparams["ends_at__lte"] = "2023-10-12T23:35"
+        logged_user = request.user
 
-        start_date = "2023-10-15T17:00:00+05:30"
-        end_date   = "2023-10-15T17:30:00+05:30"
+        # SuperUsers can view all the meetings
+        if logged_user.is_superuser:
+            meetings = Meeting.list_meetings()
+        else:
+            meetings = logged_user.list_meetings()
 
-        start_date = "2023-10-15T17:30:00+05:30"
-        end_date   = "2023-10-15T18:00:00+05:30"
-
-        start_date = "2023-10-15T15:30:00+05:30"
-        end_date   = "2023-10-15T17:40:00+05:30"
-
-        queryparams = (
-        (Q(starts_at__gte=start_date) & Q(starts_at__lt=end_date)) |
-        (Q(ends_at__gt=start_date) & Q(ends_at__lte=end_date))
-        )
-
-        # queryparams = ()
-
-        # queryparams = (
-        # Q(starts_at__range=(start_date, end_date)) 
-        # | Q(ends_at__range=(start_date, end_date))
-        # )
-
-        # meetings = Meeting.list_meetings(queryparams)
-        meetings = Meeting.list_meetings()
         meeting_serializer = MeetingSerializer(meetings, many=True)
         response = meeting_serializer.data
         http_status = 200
-        
+
         return Response(response, status=http_status)
+
 
     # describe meeting
     @resp_excp_handler
     def describe_meeting(self, request) -> Response:
+        """Describes a meeting based on the supplied meeting id"""
         response = self.RESPONSE
         http_status = self.HTTP_STATUS
 
+        logged_user = request.user
         req = request.data
+
         meeting_id = req.get("id", None)
         if meeting_id:
-            meeting = Meeting.get_meeting(id=meeting_id)
+
+            if logged_user.is_superuser:
+                meeting = Meeting.get_meeting(id=meeting_id)
+            else:
+                queryset = {'id': meeting_id}
+                meeting = logged_user.list_meetings(queryset)
+                meeting = meeting[0] if meeting.count() > 0 else None
+
             if meeting:
                 meeting_serializer = MeetingSerializer(meeting, many=False)
                 response = meeting_serializer.data
                 http_status = 200
             else:
-                response = {"message" : "No meeting found with the supplied id: {}.".format(meeting_id) }
+                response = {"message" : f"No meeting found with the supplied id: {meeting_id}." }
                 http_status = 200
         else:
             response = {"message" : "Please supply a valid 'id' via the request"}
             http_status = 400
         return Response(response, status=http_status)
 
+
     # update meeting
     @resp_excp_handler
     def update_meeting(self, request) -> Response:
+        """Updates an existing meeting based on the supplied payload"""
         response = self.RESPONSE
         http_status = self.HTTP_STATUS
 
+        logged_user = request.user
         post_data = request.data
-        # post_data["created_by"] = request.user.get_id()
         meeting_id = post_data.get("id", None)
 
         if meeting_id:
             meeting = Meeting.get_meeting(meeting_id)
+
             if meeting:
+                # Returns unauthorized code if the logged in user is not the owner of the meeting
+                if logged_user != meeting.created_by:
+                    response, http_status = {"message" : "You are not authorized to update this meeting"}, 403
+                    return Response(data=response, status=http_status)
+
                 meeting_serializer = MeetingSerializer(instance=meeting, data=post_data)
                 if meeting_serializer.is_valid():
                     meeting_serializer.save()
@@ -137,23 +130,32 @@ class MeetingViewSet:
                 response = {"message" : "meeting not found"}
         else:
             response = {"message" : "Please supply a valid meeting 'id' via the request"}
-        
+
         return Response(data=response, status=http_status)
-    
+
 
     # ToDo: optimize the fuction and reduce conditional blocks
     @resp_excp_handler
-    def manage_users(self, request):
+    def manage_users(self, request) -> Response:
+        """Lets the user add or remove attendees from the meeting"""
         response = self.RESPONSE
         http_status = self.HTTP_STATUS
 
+        logged_user = request.user
         req = request.data
+
         meeting_id = req.get("id", "9999")
         attendees = req.get("attendees", [])
         operation = req.get("operation", None)
 
         meeting = Meeting.get_meeting(id=meeting_id)
         if meeting:
+
+            # Returns unauthorized code if the logged in user is not the owner of the meeting
+            if logged_user != meeting.created_by:
+                response, http_status = {"message" : "You are not authorized to update this meeting"}, 403
+                return Response(data=response, status=http_status)
+
             if all([attendees, operation]):
                 if operation == "add":
                     success = meeting.add_attendees(attendees)
@@ -183,16 +185,27 @@ class MeetingViewSet:
         return Response(response, status=http_status)
 
 
-
     @resp_excp_handler
     def delete_meeting(self, request):
+        """Deletes meeting only if the logged user owns it"""
         response = self.RESPONSE
         http_status = self.HTTP_STATUS
 
+        logged_user = request.user
         req = request.data
-        meeting_id = req.get("id", None)
-        if meeting_id:
+
+        meeting_id = req.get("id", "0!")
+
+        # Returns unauthorized code if the logged in user is not the owner of the meeting
+        meeting = Meeting.get_meeting(id=meeting_id)
+
+        if meeting:
+            if logged_user != meeting.created_by:
+                response, http_status = {"message" : "You are not authorized to update this meeting"}, 403
+                return Response(data=response, status=http_status)
+
             is_success = Meeting.delete_meeting(id=meeting_id)
+
             if is_success:
                 response = {"message" : "Meeting deleted"}
                 http_status = 202 #accepted
@@ -204,3 +217,4 @@ class MeetingViewSet:
             http_status = 400
 
         return Response(response, status=http_status)
+    

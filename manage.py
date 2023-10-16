@@ -8,6 +8,7 @@ from Gather.settings import base_settings
 def main():
     """Run administrative tasks."""
 
+    # Based on the DEBUG flag, the application will automatically switch between local and prod settings
     if base_settings.DEBUG:
         os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Gather.settings.local_settings')
     else:

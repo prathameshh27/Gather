@@ -1,8 +1,10 @@
 import uuid
 from rest_framework.response import Response
 
+
+# Typically used for replacing the default sequential IDs in the model 
 def custom_id():
-    """generates 8 character alphanumeric ID """
+    """generates 8 character alphanumeric ID"""
     unique_id = str(uuid.uuid4())[:8]
     return unique_id
 
@@ -17,9 +19,9 @@ def get_validation_errors(serializer) -> dict:
     return errors
 
 
-# Decorator to handle Response exceptions
+# Decorator for handling Response exceptions
 def resp_excp_handler(func):
-    """Input: Request Handler"""
+    """Input: fuction based view"""
     def wrapper(*args,**kwargs):
         msg = {"message": " The request could not be fulfilled"}
 
@@ -30,5 +32,17 @@ def resp_excp_handler(func):
             msg["error"] = str(excp)
             response_data = Response(msg, status=500)
             return response_data
-    
+    return wrapper
+
+
+# Decorator for Checking if the logged in user has superuser privileges.
+def superuser_required(func):
+    """Input: fuction based view"""
+    def wrapper(request, *args, **kwargs):
+        if request.user.is_superuser:
+            response_data = func(request, *args, **kwargs)
+            return response_data
+        else:
+            response, http_status = {"message" : "You are not authorized to perform this operation"}, 403
+            return Response(data=response, status=http_status)
     return wrapper

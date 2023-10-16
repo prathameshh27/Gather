@@ -15,6 +15,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 import pytz
 
+# lots the config from .env file in the root dir.
 load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -137,6 +138,8 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+
+# Enables Authentication for the rest modules 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',

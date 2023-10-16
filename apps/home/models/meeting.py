@@ -1,13 +1,17 @@
+from django.conf import settings
+from django.utils import timezone
+
 from django.db import models
+
 from apps.lib.utils.functions import custom_id
 from .user import CustomUser
-from django.utils import timezone
-from django.conf import settings
 
 
 class Meeting(models.Model):
+    """Meeting Model"""
 
     class Meta:
+        """Default Ordering enabled"""
         ordering = ('-starts_at', '-ends_at')
 
     MAX_ATTENDEES = 50
@@ -21,8 +25,8 @@ class Meeting(models.Model):
     starts_at = models.DateTimeField(null=False, blank=False, default="2000-01-01T00:00:00+05:30")
     ends_at = models.DateTimeField(null=False, blank=False, default="2000-01-01T00:00:00+05:30")
 
-    
-    # The save method is overridden to add meeting owner to the attendee list by default 
+
+    # The save method is overridden to add meeting owner to the attendee list by default
     def save(self, *args, **kwargs):
         super(Meeting, self).save(*args, **kwargs)
         self.add_attendees([self.created_by])
@@ -31,18 +35,21 @@ class Meeting(models.Model):
     def get_id(self) -> str:
         """Get meeting ID"""
         return self.id
-    
+
+
     def get_obj(self) -> object:
         """Get meeting Object"""
         return self
-    
 
+
+    # Add attendees by username. Adjust MAX_ATTENDEES to accommodate more users.
     def add_attendees(self, attendees:list) -> bool:
         """Add attendees from the meeting. 
         Pass the attendee IDs in a list even if there is only one attendee"""
         try:
             attendee_count = self.attendees.count()
             if attendee_count <= self.MAX_ATTENDEES:
+                # get all users from the input list.
                 add_list = CustomUser.objects.filter(username__in=attendees)
                 self.attendees.add(*add_list)
                 return True
@@ -50,17 +57,20 @@ class Meeting(models.Model):
                 return False
         except Exception as excp:
             return False
-        
+
+
+    # Remove attendees by username.
     def remove_attendees(self, attendees:list) -> bool:
         """Remove attendees from the meeting. 
         Pass the attendee IDs in a list even if there is only one attendee"""
         try:
+            # get existing attendees from the meeting that are to be removed
             rm_list = self.attendees.filter(username__in=attendees)
             self.attendees.remove(*rm_list)
             self.save()
             return True
         except Exception as excp:
-            return False   
+            return False
 
 
     @classmethod
@@ -74,7 +84,8 @@ class Meeting(models.Model):
         """List all upcoming meetings"""
         now = timezone.now().astimezone(cls.IST_TZ)
         return cls.objects.filter(starts_at__gte = str(now))
-    
+
+
     @classmethod
     def get_meeting(cls, id:str) -> object:
         """Get meeting by id"""
@@ -83,7 +94,8 @@ class Meeting(models.Model):
         except Exception as excp:
             meeting = None
         return meeting
-    
+
+
     @classmethod
     def delete_meeting(cls, id:str) -> bool:
         """delete meeting by id"""

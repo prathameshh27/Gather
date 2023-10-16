@@ -1,0 +1,450 @@
+{
+	"info": {
+		"_postman_id": "0ec461a4-8e31-4cf4-8d27-dd3859dca916",
+		"name": "Gather",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "16508715"
+	},
+	"item": [
+		{
+			"name": "User - create",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token a2e52721b988e5ee43f4fffbfdcf2d491cf70faf",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": \"7068e84f\",\r\n    \"username\": \"sahil\",\r\n    \"first_name\": \"Sahil\",\r\n    \"last_name\": \"Sharma\",\r\n    \"email\": \"sahils@abc.com\",\r\n    \"date_joined\": \"2023-10-12T22:28:18+05:30\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/v1/user/create",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"v1",
+						"user",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User - update",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token a2e52721b988e5ee43f4fffbfdcf2d491cf70faf",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": \"7068e84f\",\r\n    \"username\": \"anuj\",\r\n    \"first_name\": \"Anuj\",\r\n    \"last_name\": \"A.\",\r\n    \"email\": \"anuj@abc.com\",\r\n    \"date_joined\": \"2023-10-12T22:28:18+05:30\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/v1/user/update",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"v1",
+						"user",
+						"update"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User - describe",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token a2e52721b988e5ee43f4fffbfdcf2d491cf70faf",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\":\"c3c7e9e3\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/v1/user/describe",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"v1",
+						"user",
+						"describe"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User - list",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token a2e52721b988e5ee43f4fffbfdcf2d491cf70faf",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/v1/user/list",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"v1",
+						"user",
+						"list"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Meeting - create",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token a2e52721b988e5ee43f4fffbfdcf2d491cf70faf",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"FE fixes\",\r\n    \"description\": \"Adhoc meeting scheduled for visiting urgent issues\",\r\n    \"created_by\": \"admin\",\r\n    \"attendees\": [\r\n        \"admin\",\r\n        \"guest\",\r\n        \"ram\"\r\n    ],\r\n    \"starts_at\": \"2023-10-17T20:00:00+05:30\",\r\n    \"ends_at\": \"2023-10-17T21:00:00+05:30\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/v1/meeting/create",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"v1",
+						"meeting",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Meeting - update",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token a2e52721b988e5ee43f4fffbfdcf2d491cf70faf",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": \"eda3cdd6\",\r\n    \"title\": \"Backend fixes\",\r\n    \"description\": \"AdHoc meeting scheduled for visiting urgent issues\",\r\n    \"created_by\": \"admin\",\r\n    \"attendees\": [\r\n        \"admin\",\r\n        \"guest\",\r\n        \"ram\"\r\n    ],\r\n    \"starts_at\": \"2023-10-16T20:00:00+05:30\",\r\n    \"ends_at\": \"2023-10-16T21:00:00+05:30\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/v1/meeting/update",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"v1",
+						"meeting",
+						"update"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Meeting - describe",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token a2e52721b988e5ee43f4fffbfdcf2d491cf70faf",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\" : \"1ccd2ed7\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/v1/meeting/describe",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"v1",
+						"meeting",
+						"describe"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Meeting - list",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token a2e52721b988e5ee43f4fffbfdcf2d491cf70faf",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/v1/meeting/list",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"v1",
+						"meeting",
+						"list"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Meeting - delete",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token a2e52721b988e5ee43f4fffbfdcf2d491cf70faf",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": \"f5dc7f68\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/v1/meeting/delete",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"v1",
+						"meeting",
+						"delete"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Meeting - add users",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token a2e52721b988e5ee43f4fffbfdcf2d491cf70faf",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\":\"1ccd2ed7\",\r\n    \"attendees\": [\r\n            \"prath\",\r\n            \"ram\"\r\n        ],\r\n    \"operation\": \"add\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/v1/meeting/manage_users",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"v1",
+						"meeting",
+						"manage_users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Meeting - remove users",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token a2e52721b988e5ee43f4fffbfdcf2d491cf70faf",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\":\"1ccd2ed7\",\r\n    \"attendees\": [\r\n            \"prath\",\r\n            \"ram\"\r\n        ],\r\n    \"operation\": \"remove\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/v1/meeting/manage_users",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"v1",
+						"meeting",
+						"manage_users"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
